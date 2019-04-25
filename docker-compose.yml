@@ -1,0 +1,26 @@
+version: "3.4"
+
+x-logging:
+  &default-logging
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "2"
+
+services:
+  registry:
+    build:
+      context: ./registry
+      dockerfile: Dockerfile
+    container_name: basic-registry
+    logging: *default-logging
+    restart: always
+    environment:
+      - TZ=Asia/Bangkok
+    command: ["registry", "serve", "/etc/docker/registry/config.yml"]
+    volumes:
+      - ./registry/config.yml:/etc/docker/registry/config.yml:ro
+      - ./registry/data:/var/lib/registry
+    ports:
+      - 5000:5000 # registry port
+      - 5001:5001 # debugging port 
